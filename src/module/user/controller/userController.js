@@ -80,3 +80,29 @@ exports.getUsers = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+exports.getMe = async (req, res) => {
+    try {
+        const {userId, email} = req.user;
+        const user = await User.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+} 
+
+exports.showUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await User.findById(id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}   
