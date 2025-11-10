@@ -1,15 +1,15 @@
 const express = require("express")
 const router = express.Router()
-const {createUser, loginUser, getUsers, getMe, showUser, refreshTokenUsen} =require('../controller/userController.js');
-const { checkUserToken } = require("../../../middleware/AuthUsercheck.js");
+const {createUser, loginUser, getUsers, getMe, showUser, refreshTokenUsen, refreshTokenUser} =require('../controller/userController.js');
+const { checkUserToken, checkAdminToken } = require("../../../middleware/AuthUsercheck.js");
 
 router.post('/create', createUser);
 
 router.post('/login',loginUser);
 
-router.get('/refresh-token', refreshTokenUsen)
+router.post('/refresh-token', refreshTokenUser)
 
-router.get('/gert-users', checkUserToken, getUsers)
+router.get('/gert-users', checkAdminToken, getUsers)
 
 router.get('/me', checkUserToken, getMe)
 
