@@ -8,8 +8,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    }
-});
+    },
+    refreshToken:String,
+}, {timestamps:true});
 
 const User = mongoose.model("user", UserSchema) 
 module.exports = User;

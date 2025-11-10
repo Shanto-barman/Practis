@@ -52,6 +52,8 @@ exports.loginUser = async (req, res) => {
             JWT_SECRET,
             { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
         );
+        user.refreshToken = refreshToken;
+        await user.save();
 
         return res.status(200).json({
             message: 'Login successful',
@@ -106,3 +108,29 @@ exports.showUser = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }   
+
+exports.refreshTokenUsen = async (req, res) =>{
+    const {refreshToken} = req.body;
+
+    if (!refreshToken){
+        return res.status(400).json({message:"Refresh token is required"});
+    }
+    try{
+        const decoded = jwt.verify(refreshToken, JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+
+        if(!user || user.refreshToken !== refreshToken){
+            return res.status(403).json({message:'Invalid refresh token'})
+        }
+        const newAccessToken = jwt.sign(
+            {userId:user._id, email:user.email, role:user.role },JWT_SECRET,
+            {expiresIn:ACCESS_TOKEN_EXPIRES_IN}
+        );
+
+        return res.status(200).json({
+            accessToken:newAccessToken,
+        });
+    }catch(err){
+        return res.status(403).json({message:'Invalid or expired refresh token'})
+    }
+};
